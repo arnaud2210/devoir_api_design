@@ -1,12 +1,26 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends, Security
+from fastapi_auth0 import Auth0, Auth0User
 from datetime import datetime
-from . proxy_config import fetch_user, fetch_weather, fetch_clothing, classify_temperature
+from proxy_config import fetch_user, fetch_weather, fetch_clothing, classify_temperature
+
+
+# Configuration Auth0
+AUTH0_DOMAIN = "dev-jpzjychpmohjc4wr.eu.auth0.com"
+AUTH0_CLIENT_ID = "CQZWjmiw25vgWX1ONPsqZG27eEWX6cmD"
+AUTH0_CLIENT_SECRET = "omVlGn4vTN-7R0QO4Hdtqc_yqjl5msMro4qnFyD_NLd8lY_R73GVQcOzv-LaBD0e"
+AUTH0_API_AUDIENCE = "meteo_service"
+AUTH0_ALGORITHM = "RS256"
+
+auth = Auth0(domain=AUTH0_DOMAIN, api_audience=AUTH0_API_AUDIENCE, scopes={'read:recommandations': 'get read recommandation for your clothes with meteo'})
 
 app = FastAPI()
 
+@app.get("/secure", dependencies=[Depends(auth.implicit_scheme)])
+def get_secure(user: Auth0User = Security(auth.get_user, scopes=['read:recommandations'])):
+    return {"message": f"{user}"}
 
-@app.get("/recommendation")
-async def get_recommendation(location: str, date: str, user_id: int):
+@app.get("/recommendation", dependencies=[Depends(auth.implicit_scheme)])
+async def get_recommendation(location: str, date: str, user_id: int, user: Auth0User = Security(auth.get_user, scopes=['read:recommandations'])):
     # Validation de la date
     try:
         datetime.strptime(date, "%Y-%m-%d")

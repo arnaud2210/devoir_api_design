@@ -1,0 +1,36 @@
+#version: '3.8'
+services:
+  user-service:
+    restart: always
+    build: ./user_service
+    ports:
+      - "8001:8001"
+    networks:
+      - db_network
+      - web_network
+    
+  clothing-service:
+    restart: always
+    build: ./clothing_service
+    ports:
+      - "8002:8002"
+    networks:
+      - db_network
+      - web_network
+  
+  meteo-service:
+    restart: always
+    build: ./gateway
+    ports:
+      - "8000:8000"
+    networks:
+      - db_network
+      - web_network  
+  
+  
+networks:
+  db_network:
+    driver: bridge
+  web_network:
+    driver: bridge
+ 

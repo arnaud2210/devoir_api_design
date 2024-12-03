@@ -2,8 +2,8 @@ import httpx
 from fastapi import HTTPException
 from datetime import datetime
 
-USER_SERVICE_URL = "http://localhost:8001"
-CLOTHING_SERVICE_URL = "http://localhost:8002"
+USER_SERVICE_URL = "http://192.168.110.128:8001"
+CLOTHING_SERVICE_URL = "http://192.168.110.128:8002"
 WEATHER_API_BASE_URL = "https://api.meteo-concept.com/api/forecast/daily"
 WEATHER_API_KEY = "287d880ad1f291f0baceb2d3f51802efb322313d0c401d97844772854db56f53"
 
